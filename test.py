@@ -2,6 +2,34 @@ from opentrons import types
 import math
 import matplotlib.pyplot as plt
 
+import re
+
+pattern = '^(\d+),(\d+): \(([0-9.]+).*$'
+
+with open("triangle.txt") as file:
+    lines = [line.rstrip() for line in file]
+
+coords=[]
+rows, cols=40,40
+for i in range(rows):
+    col = []
+    for j in range(cols):
+        col.append(0)
+    coords.append(col)
+
+for line in lines:
+    result = re.match(pattern, line)
+
+    if result:
+        x = int(result.group(1))
+        y = int(result.group(2))
+        a = float(result.group(3))
+        coords[x][y] = a
+
+print(coords)
+
+exit
+
 plt.rcParams["figure.figsize"] = (10,10)
 
 def mock_print(str):
@@ -334,16 +362,19 @@ def run(protocol):
   pipette_20ul.aspirate(16, input_plate['A1'])  
 
   step = 2
-  size = 20
+  size = 60
+  half = size / 2;
 
   # Pattern a 1uL dot array
-  for i in range(size * -1,size):
-    for j in range(size * -1,size):
-      # Get a location i*5 mm right, j*5 mm back from the center of the plate.
-      adjusted_location = center_location.move(types.Point(x=i*step, y=j*step))
-      dist = math.sqrt(i**2+j**2)
-      if (dist < 12):
-          pipette_20ul.dispense(1, adjusted_location)
+  for i in range(size):
+    for j in range(size):
+      ii = i * step - half;
+      jj = j * step - half;
+      adjusted_location = center_location.move(types.Point(x=ii, y=jj))
+      dist = math.sqrt(ii**2+jj**2)
+      if (dist < 26):
+          if (coords[i][j] > 0.1):
+              pipette_20ul.dispense(1, adjusted_location)
 
 color_by_well = {
     'A1' : 'blue'
