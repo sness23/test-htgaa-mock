@@ -342,7 +342,7 @@ def run(protocol):
       # Get a location i*5 mm right, j*5 mm back from the center of the plate.
       adjusted_location = center_location.move(types.Point(x=i*step, y=j*step))
       dist = math.sqrt(i**2+j**2)
-      if (dist > 5) and (dist < 12):
+      if (dist < 12):
           pipette_20ul.dispense(1, adjusted_location)
 
 color_by_well = {
