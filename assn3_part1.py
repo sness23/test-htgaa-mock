@@ -306,27 +306,21 @@ def run(protocol):
   size = 30 # Size in mm, designed to fit on 85mm agar plate
   vol = 20 # Volume to aspirate
 
-  # Calculate image parameters
-  #url = 'https://raw.githubusercontent.com/Minikaw/Microbial_Earth_Coordinates/main/ResultsMicrobialWorld_final.csv'
-  url = "marilyn.csv"
+  # Calculate image
+  #url = 'https://raw.githubusercontent.com/sness23/test-htgaa-mock/main/marilyn.csv'
+  url = 'marilyn.csv'
   data = pd.read_csv(url)
   data.columns = ["x", "y"]
   x = data['x']
-  y = np.amax(data['y'])-data['y']
-  x_min = np.amin(x)
-  x_max = np.amax(y)
-  y_min = np.amin(y)
-  y_max = np.amax(y)
-  x_shift = x-((x_min + x_max)/2)
-  y_shift = y-((y_min + y_max)/2)
+  y = data['y']
+  x_shift = x-((np.amin(x) + np.amax(x)/2))
+  y_shift = y-((np.amin(y) + np.amax(y)/2))
   radius = np.sqrt(np.square(x_shift) + np.square(y_shift));
   x_trans = size/np.amax(radius)*x_shift;
   y_trans = size/np.amax(radius)*y_shift;
-
   center_location = agar_plate['A1'].top()
   cell_well = source_plate['A1']
 
-  # Procedure
   pipette_20ul.pick_up_tip()
 
   for i in range(len(x_trans)):
